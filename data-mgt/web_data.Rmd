@@ -12,7 +12,7 @@ For this tutorial we will combine data from three separate web data repositories
 
 First install some packages
 
-```{r, eval = FALSE, warning = FALSE}
+```{r, libraries, eval = FALSE, warning = FALSE}
 install.packages("rgbif")
 install.packages("taxize_")
 install.packages("rfisheries")
@@ -20,9 +20,11 @@ install.packages("rfisheries")
 
 ```{r, loading, warning = FALSE}
 # First we load all the packages.
-library(rfisheries, warning = FALSE)
+library(rfisheries)
 library(rgbif)
 library(taxize)
+library(rfisheries)
+library(plyr)
 ```
 # Retrieve some fisheries data. We query the Open Fisheries database to get a full list of species. 
 ```{r, fisheries_data}
@@ -45,17 +47,29 @@ Next, using the species names we can verify whether they are correct and also lo
 taxon_identifiers <- get_tsn(species[,1])
 # then we can grab the taxonomic information for each species
 classification_data <- classification(taxon_identifiers)
+names(classification_data) <- species[[1]]
+cleaned_classification <- classification_data[-which(is.na(classification_data))]
+cleaned_classification <- ldply(cleaned_classification)
 ```
 Similarly we can query the gbif database and obtain distribution data (lat, long) for these species.
 
 
 ```{r, gbif, warning = FALSE}
 # then locations
-locations <- llply(species[, 1], occurrencelist_many, .progress="text")
+omany <- failwith(NULL, occurrencelist_many)
+locations <- llply(as.list(species[[1]]), omany, .progress = "none")
 ```
 
-As a last step we merge the data. Plot some data. write those plots to disk.
-Then we add some EML
+```{r, save}
+write.csv(species, file = "data/species.csv")
+write.csv(cleaned_classification, file = "data/cleaned_classification.csv")
+# write.csv(locations, file = "data/locations.csv")
+# This needs some work. Scott, any thoughts of maybe working with a more defined species list?
+```
+
+visualize the data
+write to disk
+add some EML
 and push to figshare.
 
 ---
