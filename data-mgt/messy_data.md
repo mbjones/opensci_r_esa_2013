@@ -1,14 +1,14 @@
 
-# A tutorial on how to read and clean messy data
+# A short tutorial on how to read and clean messy data
 
-Raw data from various ecological studies can be poorly formatted and/or may lack appropriate details of the study. Correcting data in place can be a dangerous exercise since the original raw data would get overwritten and there would be no way to audit and recover from mistakes made during this time. A good data practice would be to maintain the original data, but use a programmatic script to clean it, fix mistakes and save that cleaned dataset for further analysis. 
+Raw data from various ecological studies can be poorly formatted and/or may lack appropriate details of the study. Correcting data in place can be a dangerous exercise since the original raw data would get overwritten and there would be no way to audit this process or recover from mistakes made during this time. A good data practice would be to maintain the original data, but use a programmatic script to clean it, fix mistakes and save that cleaned dataset for further analysis. 
 
 ![A sample workflow](assets/sample_workflow.png)
 
 In the example below, we use a data file obtained as plain text and clean up incorrect spacing, separators. Then we look up the appropriate metadata 
 
 
-```coffee
+```r
 library(stringr)
 # If you don't have this package simply run install.packages('stringr')
 rawData <- readLines("data/messy_data.txt")
@@ -16,7 +16,7 @@ rawData <- readLines("data/messy_data.txt")
 
 
 
-```coffee
+```r
 # Count number of lines (make sure it's what you're expecting)
 length(rawData)
 ```
@@ -30,7 +30,7 @@ We've got two issues here. First, we need to split the dates into two separate f
 
 
 
-```coffee
+```r
 # First we use a function in the stringr package to locate where the
 # dashes are. Note that we are not just searching for the dash but a
 # string that includes the space before and after.
@@ -43,7 +43,7 @@ rawData[1]
 ## [1] "J. Pritchard    01/12 - 12/11  1 1500 W  7.0 420 48  Migratory 3"
 ```
 
-```coffee
+```r
 dashes[1]
 ```
 
@@ -55,7 +55,7 @@ dashes[1]
 
 
 
-```coffee
+```r
 ## ----------------------------------------------- A function to remove
 ## extra spaces and split the dates
 ## -------------------------------------------
@@ -85,7 +85,7 @@ formatData <- function(rawD) {
 }
 ```
 
-```coffee
+```r
 first_pass <- sapply(1:length(rawData), function(x) {
     splitByDate(rawData[x], dashes[[x]][1], dashes[[x]][2])
 })
@@ -94,21 +94,62 @@ names(cleaned_data) <- c("observer", "date_first", "date_last", "id", "distance"
     "direction", "speed", "measurex", "measurey", "migratory_status", "times_observed")
 ```
 
+
+
+```r
+# str is short for structure
+str(cleaned_data)
+```
+
+```
+## 'data.frame':	6 obs. of  11 variables:
+##  $ observer        : chr  "J. Pritchard" "E. Jones" "J. Pritchard" "Matt Jones" ...
+##  $ date_first      : chr  "01/12" "02/18" "01/13" "09/23" ...
+##  $ date_last       : chr  "12/11" "04/21" "02/17" "11/23" ...
+##  $ id              : chr  "1" "4" "15" "23" ...
+##  $ distance        : chr  "1500" "1293" "1028" "563" ...
+##  $ direction       : chr  "W" "N" "N" "N" ...
+##  $ speed           : chr  "7.0" "8.0" "4.0" "3.0" ...
+##  $ measurex        : chr  "420" "490" "46" "470" ...
+##  $ measurey        : chr  "48" "48" "460" "47" ...
+##  $ migratory_status: chr  "Migratory" "Resident" "Migratory" "Resident" ...
+##  $ times_observed  : chr  "3" "1" NA "2" ...
+```
+
+```r
+cleaned_data$date_first
+```
+
+```
+## [1] "01/12" "02/18" "01/13" "09/23" "07/05" "10/24"
+```
+
+```r
+# oops, we forgot to add the year. All these data were collected in 2012
+cleaned_data$date_first <- paste0(cleaned_data$date_first, "/12")
+cleaned_data$date_last <- paste0(cleaned_data$date_last, "/12")
+# Now let's typecast these data as a Date class
+cleaned_data$date_first <- as.Date(cleaned_data$date_first, "%m/%d/%y")
+cleaned_data$date_last <- as.Date(cleaned_data$date_last, "%m/%d/%y")
+```
+
+
+
 We can examine the data to make sure everything looks ok.
 
 
-```coffee
+```r
 head(cleaned_data)
 ```
 
 ```
-##         observer date_first date_last   id distance direction speed
-## 1   J. Pritchard      01/12     12/11    1     1500         W   7.0
-## 2       E. Jones      02/18     04/21    4     1293         N   8.0
-## 3   J. Pritchard      01/13     02/17   15     1028         N   4.0
-## 4     Matt Jones      09/23     11/23   23      563         N   3.0
-## 5 S. Chamberlain      07/05     09/26   22      713         N   5.2
-## 6   C. Boettiger      10/24     10/30 1495        S        30   1.9
+##         observer date_first  date_last   id distance direction speed
+## 1   J. Pritchard 2012-01-12 2012-12-11    1     1500         W   7.0
+## 2       E. Jones 2012-02-18 2012-04-21    4     1293         N   8.0
+## 3   J. Pritchard 2012-01-13 2012-02-17   15     1028         N   4.0
+## 4     Matt Jones 2012-09-23 2012-11-23   23      563         N   3.0
+## 5 S. Chamberlain 2012-07-05 2012-09-26   22      713         N   5.2
+## 6   C. Boettiger 2012-10-24 2012-10-30 1495        S        30   1.9
 ##   measurex measurey migratory_status times_observed
 ## 1      420       48        Migratory              3
 ## 2      490       48         Resident              1
@@ -118,18 +159,18 @@ head(cleaned_data)
 ## 6       47      410        Migratory           <NA>
 ```
 
-```coffee
+```r
 tail(cleaned_data)
 ```
 
 ```
-##         observer date_first date_last   id distance direction speed
-## 1   J. Pritchard      01/12     12/11    1     1500         W   7.0
-## 2       E. Jones      02/18     04/21    4     1293         N   8.0
-## 3   J. Pritchard      01/13     02/17   15     1028         N   4.0
-## 4     Matt Jones      09/23     11/23   23      563         N   3.0
-## 5 S. Chamberlain      07/05     09/26   22      713         N   5.2
-## 6   C. Boettiger      10/24     10/30 1495        S        30   1.9
+##         observer date_first  date_last   id distance direction speed
+## 1   J. Pritchard 2012-01-12 2012-12-11    1     1500         W   7.0
+## 2       E. Jones 2012-02-18 2012-04-21    4     1293         N   8.0
+## 3   J. Pritchard 2012-01-13 2012-02-17   15     1028         N   4.0
+## 4     Matt Jones 2012-09-23 2012-11-23   23      563         N   3.0
+## 5 S. Chamberlain 2012-07-05 2012-09-26   22      713         N   5.2
+## 6   C. Boettiger 2012-10-24 2012-10-30 1495        S        30   1.9
 ##   measurex measurey migratory_status times_observed
 ## 1      420       48        Migratory              3
 ## 2      490       48         Resident              1
@@ -144,7 +185,7 @@ Now we can confidently save these data into a separate file which w called `clea
 
 
 
-```coffee
+```r
 write.csv(cleaned_data, file = "data/cleaned_data.csv")
 ```
 
