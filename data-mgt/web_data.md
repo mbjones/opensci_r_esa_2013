@@ -13,7 +13,7 @@ For this tutorial we will combine data from three separate web data repositories
 First install some packages
 
 
-```r
+```coffee
 install.packages("rgbif")
 install.packages("taxize_")
 install.packages("rfisheries")
@@ -21,7 +21,7 @@ install.packages("rfisheries")
 
 
 
-```r
+```coffee
 # First we load all the packages.
 library(rfisheries)
 library(rgbif)
@@ -33,7 +33,7 @@ library(plyr)
 # Retrieve some fisheries data. 
 We query the Open Fisheries database to get a full list of species. 
 
-```r
+```coffee
 # The species_codes function retrieves a full list of species from the
 # Open Fisheries database
 species_list <- species_codes(progress = "none")
@@ -41,7 +41,7 @@ species_list <- species_codes(progress = "none")
 
 
 
-```r
+```coffee
 head(species)
 ```
 
@@ -58,7 +58,7 @@ head(species)
 ## 10451 Japanese flying squid
 ```
 
-```r
+```coffee
 # Rather than look up data for every single one in this dataset, we'll
 # pick a random sample of 10
 species <- species_list[sample(nrow(species_list), 10), ]
@@ -71,7 +71,7 @@ Grab some landings data for these species
 
 
 
-```r
+```coffee
 safe_landings <- failwith(NULL, landings)
 landings_data <- llply(species$a3_code, function(x) landings(species = x))
 ```
@@ -81,7 +81,7 @@ Next, using the species names we can verify whether they are correct and also lo
 
 #
 
-```r
+```coffee
 # Using the species names we obtain taxonomic identifiers
 taxon_identifiers <- get_tsn(species$scientific_name)
 ```
@@ -97,7 +97,7 @@ taxon_identifiers <- get_tsn(species$scientific_name)
 ## Retrieving data for species ' Todarodes pacificus '
 ```
 
-```r
+```coffee
 # then we can grab the taxonomic information for each species
 classification_data <- classification(taxon_identifiers)
 ```
@@ -109,7 +109,7 @@ classification_data <- classification(taxon_identifiers)
 ## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=557230
 ```
 
-```r
+```coffee
 names(classification_data) <- species[[1]]
 cleaned_classification <- ldply(classification_data)
 ```
@@ -119,7 +119,7 @@ Note: You may notice that we found nothing on ta
 
 
 
-```r
+```coffee
 # then locations
 locations <- llply(as.list(species$scientific_name), occurrencelist_many, .progress = "none")
 location_df <- compact(llply(locations, gbifdata))
@@ -130,53 +130,26 @@ new_data <- merge(species, location_df)
 
 
 
-```r
+```coffee
 library(cshapes)
-```
-
-```
-## Loading required package: sp Loading required package: maptools Loading
-## required package: foreign Loading required package: grid Loading required
-## package: lattice Checking rgeos availability: TRUE
-```
-
-```
-## Warning: replacing previous import '.__C__im' when loading 'maptools'
-## Warning: replacing previous import '.__C__owin' when loading 'maptools'
-## Warning: replacing previous import '.__C__ppp' when loading 'maptools'
-## Warning: replacing previous import '.__C__psp' when loading 'maptools'
-```
-
-```r
 # install.packages('cshapes')
 world <- cshp(date = as.Date("2008-1-1"))
 world.points <- fortify(world, region = "COWCODE")
-```
-
-```
-## Loading required package: rgeos rgeos version: 0.2-19, (SVN revision 394)
-## GEOS runtime version: 3.3.3-CAPI-1.7.4 Polygon checking: TRUE
-```
-
-```r
-result$taxonName <- as.factor(capwords(result$taxonName, onlyfirst = TRUE))
-```
-
-```
-## Error: object 'result' not found
-```
-
-```r
 # Make a map
 species_map <- ggplot(world.points, aes(long, lat)) + geom_polygon(aes(group = group), 
     fill = "#EEEBE7", color = "#6989A0", size = 0.2) + geom_point(data = new_data, 
     aes(decimalLongitude, decimalLatitude, colour = scientific_name), alpha = 0.4, 
     size = 3) + theme(legend.position = "bottom")
+species_map
 ```
 
+![plot of chunk map](figure/map.png) 
 
 
-```r
+![](data/species_map.png)
+
+
+```coffee
 ggsave(species_map, file = "data/species_map.png")
 ```
 
@@ -184,7 +157,7 @@ ggsave(species_map, file = "data/species_map.png")
 ## Saving 7 x 7 in image
 ```
 
-```r
+```coffee
 write.csv(species, file = "data/species.csv")
 write.csv(cleaned_classification, file = "data/cleaned_classification.csv")
 # write.csv(locations, file = 'data/locations.csv') This needs some work.

@@ -73,12 +73,11 @@ names(location_df)[1] <- "scientific_name"
 new_data <- merge(species, location_df)
 ```
 
-```{r, map}
+```{r, map, warning = FALSE}
 library(cshapes)
 # install.packages("cshapes")
 world <- cshp(date=as.Date("2008-1-1"))
 world.points <- fortify(world, region='COWCODE')
-result$taxonName <- as.factor(capwords(result$taxonName, onlyfirst = TRUE))
 
 # Make a map
   species_map <- ggplot(world.points, aes(long, lat)) + 
@@ -93,7 +92,10 @@ result$taxonName <- as.factor(capwords(result$taxonName, onlyfirst = TRUE))
               alpha = 0.4, 
               size = 3)  +
     theme(legend.position = "bottom")
+    species_map
 ```
+
+![](data/species_map.png)
 
 ```{r, save}
 ggsave(species_map, file = "data/species_map.png")
