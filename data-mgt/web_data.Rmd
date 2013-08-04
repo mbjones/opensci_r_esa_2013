@@ -1,0 +1,63 @@
+
+# Acquiring ecological data from the web 
+
+*Some notes on why the importance of leveraging web databases to complement one's own data and also retrieve existing datasets to answer other questions.*
+
+For this tutorial we will combine data from three separate web data repositories. 
+
+* **Open Fisheries.org** - Provides access to fisheries landing data from around the world. The data can be queried using an application programming interface (API). The R package `rfisheries` makes this possible and provides simple functions to retrieve data.
+* **Taxize** - This package provides an interface to various taxonomic data sources, including the Integrated Taxonomic Information Service. If you ever need to check spelling for species names in a large dataset and/or retrieve other information such as classification data, this is one of the easiest ways to do so. For more examples and use cases for the `taxize` package see a recently submitted paper by Chamberlain and Szocs. 
+* **Global Biodiversity Information Facility (gbif)** - Finally we use the gbif database to retrieve distribution data
+
+
+First install some packages
+
+```{r, eval = FALSE, warning = FALSE}
+install.packages("rgbif")
+install.packages("taxize_")
+install.packages("rfisheries")
+```
+
+```{r, loading, warning = FALSE}
+# First we load all the packages.
+library(rfisheries, warning = FALSE)
+library(rgbif)
+library(taxize)
+```
+# Retrieve some fisheries data. We query the Open Fisheries database to get a full list of species. 
+```{r, fisheries_data}
+# The species_codes function retrieves a full list of species from the Open Fisheries database
+species <- species_codes(progress = "none")
+```
+
+```{r, examine_data, warning = FALSE}
+head(species)
+# Rather than look up data for every single one in this dataset, we'll pick a random sample of 10
+species <- species[sample(nrow(species), 10), ]
+species
+```
+
+Next, using the species names we can verify whether they are correct and also locate other classification data which we can save alongside these data as valuable metadata. We pass these species names to various taxonomic name resolvers in the `taxize` package.
+
+#
+```{r, taxize, warning = FALSE}
+#  Using the species names we obtain taxonomic identifiers
+taxon_identifiers <- get_tsn(species[,1])
+# then we can grab the taxonomic information for each species
+classification_data <- classification(taxon_identifiers)
+```
+Similarly we can query the gbif database and obtain distribution data (lat, long) for these species.
+
+
+```{r, gbif, warning = FALSE}
+# then locations
+locations <- llply(species[, 1], occurrencelist_many, .progress="text")
+```
+
+As a last step we merge the data. Plot some data. write those plots to disk.
+Then we add some EML
+and push to figshare.
+
+---
+
+
