@@ -42,7 +42,7 @@ species_list <- species_codes(progress = "none")
 
 
 ```coffee
-head(species)
+head(species_list)
 ```
 
 ```
