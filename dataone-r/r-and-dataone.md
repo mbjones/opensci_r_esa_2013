@@ -9,6 +9,12 @@
 
 Matthew B. Jones, NCEAS, UCSB
 
+# Data in the KNB data repository
+![](images/knb-search.png)
+
+# With detailed metadata
+![](images/knb-metadata.png)
+
 # DataONE Data Flow
 
 ![](images/dataflow.png)
@@ -65,4 +71,12 @@ Matthew B. Jones, NCEAS, UCSB
 
 > * Write data to nodes that provide write service
     - e.g., KNB
-* createD1Object()
+
+* Steps
+	- Load the data frame in R
+	- Generate or request an identifier for the object
+	- Convert it to CSV format
+	- Make an instance of D1Object class containing the data
+	- Mark the object as publicly accessible
+    - Upload the object to the KNB by calling the createD1Object() method
+
