@@ -70,6 +70,9 @@ file_description = "Landings data for several species by year, from the OpenFish
 eml_write(dat = dat, col_meta, unit_meta, .title = "Landings Data", file = "landings.xml", file_description = file_description)
 ```
 
+
+## Publish to rfigshare
+
 ```{r}
 eml_publish("landings.xml", 
             description=file_description, 
@@ -79,15 +82,22 @@ eml_publish("landings.xml",
 ```
 
 
-## Location data
+## Adding Location context with GBIF
 
-```{r}
+```{r, eval=FALSE}
+library(rgbif)
 omany <- failwith(NULL, occurrencelist_many)
 locations <- llply(as.list(code_names$scientific_name), omany, .progress = "none")
 species_loc <- lapply(locations, function(x) data.frame(species = x[1], Lat = x[3], Long = x[4]))
 ```
 
-```
+
+
+
+
+Richer GBIF record ...
+
+```{r, eval=FALSE}
 omany <- failwith(NULL, occurrencelist)
 locations <- llply(as.list(code_names$scientific_name), omany, format="darwin", .progress = "none")
 gbif_dat <- lapply(locations, gbifdata, minimal = FALSE)
