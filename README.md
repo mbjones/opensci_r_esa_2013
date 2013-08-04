@@ -32,11 +32,8 @@ Prerequisites
 -------------
 - Install the R and neccessary package dependencies on your laptop
 
-  - R
-
-    - [R 3.0.1 for Mac OS X][RMac]
-    - [R 3.0.1 for Windows][RWin]
-
+  - [R 3.0.1 for Mac OS X][RMac]
+  - [R 3.0.1 for Windows][RWin]
   - [R Studio][RStudio]
 
 [RMac]: http://cran.r-project.org/bin/macosx/
