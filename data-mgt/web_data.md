@@ -134,7 +134,7 @@ new_data <- merge(species, location_df)
 library(cshapes)
 # install.packages('cshapes')
 world <- cshp(date = as.Date("2008-1-1"))
-world.points <- fortify(world, region = "COWCODE")
+world.points <- fortify(world)
 # Make a map
 species_map <- ggplot(world.points, aes(long, lat)) + geom_polygon(aes(group = group), 
     fill = "#EEEBE7", color = "#6989A0", size = 0.2) + geom_point(data = new_data, 
