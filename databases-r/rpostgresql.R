@@ -140,6 +140,26 @@ sql <- "DELETE from sites where siteid=33"
 dbGetQuery(con, sql)
 
 #
+# Some more realistic queries
+#
+habitats <- dbGetQuery(con, "SELECT habitat from sites order by habitat")
+head(habitats)
+sites <- dbGetQuery(con, "SELECT * from sites where altitude > 500")
+head(sites)
+
+#
+# SELECT with an aggregation function using group by
+#
+counts <- dbGetQuery(con, "SELECT habitat, count(*) from sites group by habitat order by habitat")
+head(counts)
+
+#
+# Join two tables to combine site and plot observations data
+#
+siteplot <- dbGetQuery(con, "SELECT s.siteid, s.altitude, p.obsid, p.plot, p.sciname, p.diameter FROM sites s, plotobs p WHERE p.siteid = s.siteid");
+head(siteplot)
+
+#
 # Free all resources!
 #
 
