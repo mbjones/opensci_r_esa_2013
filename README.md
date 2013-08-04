@@ -3,9 +3,9 @@ ESA 2013 Workshop
 Conducting Open Science using R and DataONE: A Hands-on Primer
 ============================================================== 
 
-^ Venue: | ESA 2013, Minneapolis, MN |
-^ Proposed Date: | August 4, 2013 |
-^ Status: | Proposed Workshop |
+Venue: ESA 2013, Minneapolis, MN  
+Proposed Date: August 4, 2013  
+Status: Proposed Workshop  
 
 Synopsis 
 --------
