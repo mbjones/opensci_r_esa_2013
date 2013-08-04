@@ -13,7 +13,7 @@ For this tutorial we will combine data from three separate web data repositories
 First install some packages
 
 
-```coffee
+```r
 install.packages("rgbif")
 install.packages("taxize_")
 install.packages("rfisheries")
@@ -21,7 +21,7 @@ install.packages("rfisheries")
 
 
 
-```coffee
+```r
 # First we load all the packages.
 library(rfisheries)
 library(rgbif)
@@ -30,67 +30,58 @@ library(rfisheries)
 library(plyr)
 ```
 
-# Retrieve some fisheries data. We query the Open Fisheries database to get a full list of species. 
+# Retrieve some fisheries data. 
+We query the Open Fisheries database to get a full list of species. 
 
-```coffee
+```r
 # The species_codes function retrieves a full list of species from the
 # Open Fisheries database
-species <- species_codes(progress = "none")
+species_list <- species_codes(progress = "none")
 ```
 
 
 
-```coffee
+```r
 head(species)
 ```
 
 ```
-##          scientific_name   taxocode a3_code isscaap
-## 1     Petromyzon marinus 1020100101     LAU      25
-## 2   Lampetra fluviatilis 1020100201     LAR      25
-## 3    Lampetra tridentata 1020100202     LAO      25
-## 4 Ichthyomyzon unicuspis 1020100401     LAY      25
-## 5    Eudontomyzon mariae 1020100501     LAF      25
-## 6      Geotria australis 1020100701     LAE      25
-##              english_name
-## 1             Sea lamprey
-## 2           River lamprey
-## 3         Pacific lamprey
-## 4          Silver lamprey
-## 5 Ukrainian brook lamprey
-## 6         Pouched lamprey
+##              scientific_name   taxocode a3_code isscaap
+## 7190  Comephorus baikalensis 1781500101     CFK      13
+## 9117         Lithopoma tecta 3070500502     IPT      52
+## 5932      Paranotothenia spp 17092400XX     NHY      33
+## 311       Cirrhigaleus asper 1090100301     CHZ      38
+## 3868 Hoplostethus atlanticus 1610500202     ORY      34
+## 1249    Argentina kagoshimae 1230501502     ARO      34
+##               english_name
+## 7190    Big Baikal oilfish
+## 9117 Imbricated star-shell
+## 5932    Paranotothenia nei
+## 311      Roughskin spurdog
+## 3868         Orange roughy
+## 1249
 ```
 
-```coffee
+```r
 # Rather than look up data for every single one in this dataset, we'll
 # pick a random sample of 10
-species <- species[sample(nrow(species), 10), ]
-species
+species <- species_list[sample(nrow(species_list), 10), ]
+curated_species <- c("COD", "YFT", "OYH", "SQJ")
+species <- species_list[which(species_list$a3_code %in% curated_species), ]
+```
+
+
+Grab some landings data for these species
+
+
+
+```r
+safe_landings <- failwith(NULL, landings)
+landings_data <- llply(species, function(x) landings(species = x))
 ```
 
 ```
-##                   scientific_name   taxocode a3_code isscaap
-## 7016            Pterois antennata 1780103603     PZT      34
-## 8736              Calappa angusta 2310100104     KAT      42
-## 10609         Cystophora cristata 4060301001     SEZ      63
-## 4270      Tosanoides filamentosus 1700227301     TSF      33
-## 5971  Parachaenichthys georgianus 1709345201     PGE      34
-## 3506        Ventrifossa petersoni 1480603507     VES      32
-## 10197               Gari elongata 3163800101     GQE      56
-## 9673             Pecten jacobaeus 3160800311     SJA      55
-## 3734       Nothobranchius cyaneus 1570801201     NBY      13
-## 4377          Apogon semilineatus 1701200102     OGS      33
-##                      english_name
-## 7016         Broadbarred firefish
-## 8736              Nodose box crab
-## 10609                 Hooded seal
-## 4270                             
-## 5971                             
-## 3506         Peterson's grenadier
-## 10197        Elongate sunset clam
-## 9673  Great Mediterranean scallop
-## 3734                             
-## 4377          Half-lined cardinal
+## Error: <url> malformed
 ```
 
 
@@ -98,50 +89,35 @@ Next, using the species names we can verify whether they are correct and also lo
 
 #
 
-```coffee
+```r
 # Using the species names we obtain taxonomic identifiers
 taxon_identifiers <- get_tsn(species[, 1])
 ```
 
 ```
 ## 
-## Retrieving data for species ' Pterois antennata '
+## Retrieving data for species ' Gadus morhua '
 ## 
-## Retrieving data for species ' Calappa angusta '
+## Retrieving data for species ' Thunnus albacares '
 ## 
-## Retrieving data for species ' Cystophora cristata '
+## Retrieving data for species ' Ostreola conchaphila '
 ## 
-## Retrieving data for species ' Tosanoides filamentosus '
-## 
-## Retrieving data for species ' Parachaenichthys georgianus '
-## 
-## Retrieving data for species ' Ventrifossa petersoni '
-## 
-## Retrieving data for species ' Gari elongata '
-## 
-## Retrieving data for species ' Pecten jacobaeus '
-## 
-## Retrieving data for species ' Nothobranchius cyaneus '
-## 
-## Retrieving data for species ' Apogon semilineatus '
+## Retrieving data for species ' Todarodes pacificus '
 ```
 
-```coffee
+```r
 # then we can grab the taxonomic information for each species
 classification_data <- classification(taxon_identifiers)
 ```
 
 ```
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=166886
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=98346
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=180657
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=643419
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=642595
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=550658
-## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=168261
+## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=164712
+## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=172423
+## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=79895
+## http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=557230
 ```
 
-```coffee
+```r
 names(classification_data) <- species[[1]]
 cleaned_classification <- classification_data[-which(is.na(classification_data))]
 cleaned_classification <- ldply(cleaned_classification)
@@ -151,7 +127,7 @@ Similarly we can query the gbif database and obtain distribution data (lat, long
 
 
 
-```coffee
+```r
 # then locations
 omany <- failwith(NULL, occurrencelist_many)
 locations <- llply(as.list(species[[1]]), omany, .progress = "none")
@@ -159,7 +135,7 @@ locations <- llply(as.list(species[[1]]), omany, .progress = "none")
 
 
 
-```coffee
+```r
 write.csv(species, file = "data/species.csv")
 write.csv(cleaned_classification, file = "data/cleaned_classification.csv")
 # write.csv(locations, file = 'data/locations.csv') This needs some work.
