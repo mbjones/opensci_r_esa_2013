@@ -17,9 +17,8 @@ Raw data from various ecological studies can be poorly formatted and/or may lack
 2. Multiple values in a single cell (some regexpr to split em)
 3. variables in rows (cast)
 
-and showing progressively more messy data and asking audience to identify what are the variables and columns.  I think we should hit these "guiding concepts" at the beginning and at least illustrate the first one with something truly trivial: 
 
-
+### A warm-up example
 
 
 ```{r}
@@ -46,9 +45,7 @@ names(dat) <- c("status", "sex", "count")
 ```
 
 
-## Warm-up
-
-
+## More messy: non-standard input formats
 
 
 
