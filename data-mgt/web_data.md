@@ -46,20 +46,16 @@ head(species)
 ```
 
 ```
-##              scientific_name   taxocode a3_code isscaap
-## 7190  Comephorus baikalensis 1781500101     CFK      13
-## 9117         Lithopoma tecta 3070500502     IPT      52
-## 5932      Paranotothenia spp 17092400XX     NHY      33
-## 311       Cirrhigaleus asper 1090100301     CHZ      38
-## 3868 Hoplostethus atlanticus 1610500202     ORY      34
-## 1249    Argentina kagoshimae 1230501502     ARO      34
-##               english_name
-## 7190    Big Baikal oilfish
-## 9117 Imbricated star-shell
-## 5932    Paranotothenia nei
-## 311      Roughskin spurdog
-## 3868         Orange roughy
-## 1249
+##            scientific_name   taxocode a3_code isscaap
+## 3320          Gadus morhua 1480400202     COD      32
+## 6602     Thunnus albacares 1750102610     YFT      36
+## 9657  Ostreola conchaphila 3160701102     OYH      53
+## 10451  Todarodes pacificus 3210505803     SQJ      57
+##                english_name
+## 3320           Atlantic cod
+## 6602         Yellowfin tuna
+## 9657         Olympia oyster
+## 10451 Japanese flying squid
 ```
 
 ```r
@@ -77,11 +73,7 @@ Grab some landings data for these species
 
 ```r
 safe_landings <- failwith(NULL, landings)
-landings_data <- llply(species, function(x) landings(species = x))
-```
-
-```
-## Error: <url> malformed
+landings_data <- llply(species$a3_code, function(x) landings(species = x))
 ```
 
 
@@ -91,7 +83,7 @@ Next, using the species names we can verify whether they are correct and also lo
 
 ```r
 # Using the species names we obtain taxonomic identifiers
-taxon_identifiers <- get_tsn(species[, 1])
+taxon_identifiers <- get_tsn(species$scientific_name)
 ```
 
 ```
@@ -119,21 +111,78 @@ classification_data <- classification(taxon_identifiers)
 
 ```r
 names(classification_data) <- species[[1]]
-cleaned_classification <- classification_data[-which(is.na(classification_data))]
-cleaned_classification <- ldply(cleaned_classification)
+cleaned_classification <- ldply(classification_data)
 ```
 
 Similarly we can query the gbif database and obtain distribution data (lat, long) for these species.
+Note: You may notice that we found nothing on ta
 
 
 
 ```r
 # then locations
-omany <- failwith(NULL, occurrencelist_many)
-locations <- llply(as.list(species[[1]]), omany, .progress = "none")
+locations <- llply(as.list(species$scientific_name), occurrencelist_many, .progress = "none")
+location_df <- compact(llply(locations, gbifdata))
+location_df <- ldply(location_df)
+names(location_df)[1] <- "scientific_name"
+new_data <- merge(species, location_df)
 ```
 
 
+
+```r
+library(cshapes)
+```
+
+```
+## Loading required package: sp Loading required package: maptools Loading
+## required package: foreign Loading required package: grid Loading required
+## package: lattice Checking rgeos availability: TRUE
+```
+
+```
+## Warning: replacing previous import '.__C__im' when loading 'maptools'
+## Warning: replacing previous import '.__C__owin' when loading 'maptools'
+## Warning: replacing previous import '.__C__ppp' when loading 'maptools'
+## Warning: replacing previous import '.__C__psp' when loading 'maptools'
+```
+
+```r
+# install.packages('cshapes')
+world <- cshp(date = as.Date("2008-1-1"))
+world.points <- fortify(world, region = "COWCODE")
+```
+
+```
+## Loading required package: rgeos rgeos version: 0.2-19, (SVN revision 394)
+## GEOS runtime version: 3.3.3-CAPI-1.7.4 Polygon checking: TRUE
+```
+
+```r
+result$taxonName <- as.factor(capwords(result$taxonName, onlyfirst = TRUE))
+```
+
+```
+## Error: object 'result' not found
+```
+
+```r
+# Make a map
+species_map <- ggplot(world.points, aes(long, lat)) + geom_polygon(aes(group = group), 
+    fill = "#EEEBE7", color = "#6989A0", size = 0.2) + geom_point(data = new_data, 
+    aes(decimalLongitude, decimalLatitude, colour = scientific_name), alpha = 0.4, 
+    size = 3) + theme(legend.position = "bottom")
+```
+
+
+
+```r
+ggsave(species_map, file = "data/species_map.png")
+```
+
+```
+## Saving 7 x 7 in image
+```
 
 ```r
 write.csv(species, file = "data/species.csv")
@@ -143,8 +192,7 @@ write.csv(cleaned_classification, file = "data/cleaned_classification.csv")
 ```
 
 
-visualize the data
-write to disk
+
 add some EML
 and push to figshare.
 
