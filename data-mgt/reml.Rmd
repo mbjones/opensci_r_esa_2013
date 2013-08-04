@@ -88,7 +88,12 @@ eml_publish("landings.xml",
 library(rgbif)
 omany <- failwith(NULL, occurrencelist_many)
 locations <- llply(as.list(code_names$scientific_name), omany, .progress = "none")
+names(locations) = who
 species_loc <- lapply(locations, function(x) data.frame(species = x[1], Lat = x[3], Long = x[4]))
+loc <- melt(species_loc, id = names(species_loc[[1]]))
+names(loc) = c("scientific_name", "Lat", "Long", "a3_code")
+a = join(dat, loc, by="a3_code")
+
 ```
 
 
