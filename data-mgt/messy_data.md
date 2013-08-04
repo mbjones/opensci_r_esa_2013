@@ -8,7 +8,7 @@ Raw data from various ecological studies can be poorly formatted and/or may lack
 In the example below, we use a data file obtained as plain text and clean up incorrect spacing, separators. Then we look up the appropriate metadata 
 
 
-```r
+```coffee
 library(stringr)
 # If you don't have this package simply run install.packages('stringr')
 rawData <- readLines("data/messy_data.txt")
@@ -16,7 +16,7 @@ rawData <- readLines("data/messy_data.txt")
 
 
 
-```r
+```coffee
 # Count number of lines (make sure it's what you're expecting)
 length(rawData)
 ```
@@ -30,7 +30,7 @@ We've got two issues here. First, we need to split the dates into two separate f
 
 
 
-```r
+```coffee
 # First we use a function in the stringr package to locate where the
 # dashes are. Note that we are not just searching for the dash but a
 # string that includes the space before and after.
@@ -43,7 +43,7 @@ rawData[1]
 ## [1] "J. Pritchard    01/12 - 12/11  1 1500 W  7.0 420 48  Migratory 3"
 ```
 
-```r
+```coffee
 dashes[1]
 ```
 
@@ -55,7 +55,7 @@ dashes[1]
 
 
 
-```r
+```coffee
 ## ----------------------------------------------- A function to remove
 ## extra spaces and split the dates
 ## -------------------------------------------
@@ -85,7 +85,7 @@ formatData <- function(rawD) {
 }
 ```
 
-```r
+```coffee
 first_pass <- sapply(1:length(rawData), function(x) {
     splitByDate(rawData[x], dashes[[x]][1], dashes[[x]][2])
 })
@@ -96,7 +96,7 @@ names(cleaned_data) <- c("observer", "date_first", "date_last", "id", "distance"
 
 
 
-```r
+```coffee
 # str is short for structure
 str(cleaned_data)
 ```
@@ -116,7 +116,7 @@ str(cleaned_data)
 ##  $ times_observed  : chr  "3" "1" NA "2" ...
 ```
 
-```r
+```coffee
 cleaned_data$date_first
 ```
 
@@ -124,7 +124,7 @@ cleaned_data$date_first
 ## [1] "01/12" "02/18" "01/13" "09/23" "07/05" "10/24"
 ```
 
-```r
+```coffee
 # oops, we forgot to add the year. All these data were collected in 2012
 cleaned_data$date_first <- paste0(cleaned_data$date_first, "/12")
 cleaned_data$date_last <- paste0(cleaned_data$date_last, "/12")
@@ -138,7 +138,7 @@ cleaned_data$date_last <- as.Date(cleaned_data$date_last, "%m/%d/%y")
 We can examine the data to make sure everything looks ok.
 
 
-```r
+```coffee
 head(cleaned_data)
 ```
 
@@ -159,7 +159,7 @@ head(cleaned_data)
 ## 6       47      410        Migratory           <NA>
 ```
 
-```r
+```coffee
 tail(cleaned_data)
 ```
 
@@ -185,7 +185,7 @@ Now we can confidently save these data into a separate file which w called `clea
 
 
 
-```r
+```coffee
 write.csv(cleaned_data, file = "data/cleaned_data.csv")
 ```
 
