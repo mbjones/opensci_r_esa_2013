@@ -9,5 +9,6 @@ install.packages("rfisheries")
 install.packages("rgbif")
 install.packages("rtaxize")
 install.packages("rfigshare")
+install.packages("stringr")
 ```
 
