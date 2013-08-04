@@ -117,6 +117,23 @@ first_pass <- sapply(1:length(rawData), function(x) {
 cleaned_data <- formatData(first_pass)
 names(cleaned_data) <- c("observer", "date_first", "date_last", "id", "distance", "direction", "speed", "measurex", "measurey", "migratory_status", "times_observed")
 ```
+
+```{r, fix_dates}
+# str is short for structure
+str(cleaned_data)
+
+cleaned_data$date_first
+
+# oops, we forgot to add the year. All these data were collected in 2012
+cleaned_data$date_first  <- paste0(cleaned_data$date_first, "/12")
+cleaned_data$date_last  <- paste0(cleaned_data$date_last, "/12")
+
+# Now let's typecast these data as a Date class
+cleaned_data$date_first <- as.Date(cleaned_data$date_first, "%m/%d/%y")
+cleaned_data$date_last <- as.Date(cleaned_data$date_last, "%m/%d/%y")
+```
+
+
 We can examine the data to make sure everything looks ok.
 
 ```{r, examine}

@@ -51,8 +51,8 @@ Agenda
 
 - 12:30 Primer on Data Management in R (1 hour)
 
-  - 12:30 Wrangling messy data into R (Karthik or Carl)
-  - 1:00 Data manipulation (aggregate, merge, etc.) (Karthik or Carl)
+  - 12:30 Wrangling messy data into R (Karthik)
+  - 1:00 Data manipulation (aggregate, merge, etc.) (Carl?)
 
 - 1:30 DataONE access to open data (45 minutes) (Matt)
 
@@ -65,8 +65,7 @@ Agenda
 
 - 3:15 rOpenSci (90 minutes) (Carl and Karthik)
 
-  - rgbif
-  - EML library?
-  - ...
+  - rgbif, rfisheries, taxize, rfigshare
+  - EML library
 
 - Self-guided activities or overflow
