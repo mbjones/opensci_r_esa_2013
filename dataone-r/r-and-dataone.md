@@ -9,6 +9,12 @@
 
 Matthew B. Jones, NCEAS, UCSB
 
+# Data in the KNB data repository
+![](images/knb-search.png)
+
+# With detailed metadata
+![](images/knb-metadata.png)
+
 # DataONE Data Flow
 
 ![](images/dataflow.png)
