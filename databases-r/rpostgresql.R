@@ -24,9 +24,9 @@ library(RPostgreSQL)
 # depending on the details of your database server, here are some things
 # you may need to specify:
 # ...name of database
-dbname <- "my_database"
+dbname <- "testdb_jones"
 # ...user name
-user <- "my_username"
+user <- "jones"
 # ...password (yikes, saved in the script?!?)
 password <- "my_password"
 # ...put password in a text file called ".pgpass", then read this in
@@ -35,11 +35,11 @@ password <- scan(".pgpass", what="")
 host <- "isis.nceas.ucsb.edu"
 
 # Case 1: local database not requiring username/password
-con <- dbConnect(dbDriver("PostgreSQL"), dbname=dbname)
+#con <- dbConnect(dbDriver("PostgreSQL"), dbname=dbname)
 
 # Case 2: local database requiring username/password
-con <- dbConnect(dbDriver("PostgreSQL"), user=user,
-  password=password, dbname=dbname)
+#con <- dbConnect(dbDriver("PostgreSQL"), user=user,
+#  password=password, dbname=dbname)
 
 # Case 3: remote database requiring username/password
 con <- dbConnect(dbDriver("PostgreSQL"), user=user,
