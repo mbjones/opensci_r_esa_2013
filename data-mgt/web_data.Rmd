@@ -34,7 +34,7 @@ species_list <- species_codes(progress = "none")
 ```
 
 ```{r, examine_data, warning = FALSE}
-head(species)
+head(species_list)
 # Rather than look up data for every single one in this dataset, we'll pick a random sample of 10
 species <- species_list[sample(nrow(species_list), 10), ]
 curated_species <- c("COD", "YFT", "OYH", "SQJ")
