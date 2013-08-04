@@ -92,7 +92,6 @@ world.points <- fortify(world, region='COWCODE')
               alpha = 0.4, 
               size = 3)  +
     theme(legend.position = "bottom")
-    species_map
 ```
 
 ![](data/species_map.png)
