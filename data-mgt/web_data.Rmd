@@ -26,17 +26,26 @@ library(taxize)
 library(rfisheries)
 library(plyr)
 ```
-# Retrieve some fisheries data. We query the Open Fisheries database to get a full list of species. 
+# Retrieve some fisheries data. 
+We query the Open Fisheries database to get a full list of species. 
 ```{r, fisheries_data}
 # The species_codes function retrieves a full list of species from the Open Fisheries database
-species <- species_codes(progress = "none")
+species_list <- species_codes(progress = "none")
 ```
 
 ```{r, examine_data, warning = FALSE}
 head(species)
 # Rather than look up data for every single one in this dataset, we'll pick a random sample of 10
-species <- species[sample(nrow(species), 10), ]
-species
+species <- species_list[sample(nrow(species_list), 10), ]
+curated_species <- c("COD", "YFT", "OYH", "SQJ")
+```
+
+Grab some landings data for these species
+
+
+```{r, landings}
+safe_landings <- failwith(NULL, landings)
+landings_data <- llply(species, function(x) landings(species = x))
 ```
 
 Next, using the species names we can verify whether they are correct and also locate other classification data which we can save alongside these data as valuable metadata. We pass these species names to various taxonomic name resolvers in the `taxize` package.

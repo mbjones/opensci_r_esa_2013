@@ -5,10 +5,69 @@ Raw data from various ecological studies can be poorly formatted and/or may lack
 
 ![A sample workflow](assets/sample_workflow.png)
 
+
+## Tidy data
+
+* Tidy data vs Clean data
+
+### Most common problems:
+
+
+1. Values as columns  (melt to long format)
+2. Multiple values in a single cell (some regexpr to split em)
+3. variables in rows (cast)
+
+
+### A warm-up example
+
+
+
+```r
+dat <- data.frame(males = c(injured = 4, uninjured = 2), females = c(injured = 1, 
+    uninjured = 5))
+dat
+```
+
+```
+##           males females
+## injured       4       1
+## uninjured     2       5
+```
+
+
+names as a column we can manipulate
+
+
+```r
+dat <- cbind(dat, status = rownames(dat))
+```
+
+
+Get values out of columns, variables as columns:
+
+
+```r
+dat <- melt(dat, "status")
+```
+
+
+Add some nice metadata that was absent before:
+
+
+```r
+names(dat) <- c("status", "sex", "count")
+```
+
+
+
+## More messy: non-standard input formats
+
+
+
 In the example below, we use a data file obtained as plain text and clean up incorrect spacing, separators. Then we look up the appropriate metadata 
 
 
-```coffee
+```r
 library(stringr)
 # If you don't have this package simply run install.packages('stringr')
 rawData <- readLines("data/messy_data.txt")
@@ -16,7 +75,7 @@ rawData <- readLines("data/messy_data.txt")
 
 
 
-```coffee
+```r
 # Count number of lines (make sure it's what you're expecting)
 length(rawData)
 ```
@@ -30,7 +89,7 @@ We've got two issues here. First, we need to split the dates into two separate f
 
 
 
-```coffee
+```r
 # First we use a function in the stringr package to locate where the
 # dashes are. Note that we are not just searching for the dash but a
 # string that includes the space before and after.
@@ -43,7 +102,7 @@ rawData[1]
 ## [1] "J. Pritchard    01/12 - 12/11  1 1500 W  7.0 420 48  Migratory 3"
 ```
 
-```coffee
+```r
 dashes[1]
 ```
 
@@ -55,7 +114,7 @@ dashes[1]
 
 
 
-```coffee
+```r
 ## ----------------------------------------------- A function to remove
 ## extra spaces and split the dates
 ## -------------------------------------------
@@ -85,7 +144,7 @@ formatData <- function(rawD) {
 }
 ```
 
-```coffee
+```r
 first_pass <- sapply(1:length(rawData), function(x) {
     splitByDate(rawData[x], dashes[[x]][1], dashes[[x]][2])
 })
@@ -96,7 +155,7 @@ names(cleaned_data) <- c("observer", "date_first", "date_last", "id", "distance"
 
 
 
-```coffee
+```r
 # str is short for structure
 str(cleaned_data)
 ```
@@ -116,7 +175,7 @@ str(cleaned_data)
 ##  $ times_observed  : chr  "3" "1" NA "2" ...
 ```
 
-```coffee
+```r
 cleaned_data$date_first
 ```
 
@@ -124,7 +183,7 @@ cleaned_data$date_first
 ## [1] "01/12" "02/18" "01/13" "09/23" "07/05" "10/24"
 ```
 
-```coffee
+```r
 # oops, we forgot to add the year. All these data were collected in 2012
 cleaned_data$date_first <- paste0(cleaned_data$date_first, "/12")
 cleaned_data$date_last <- paste0(cleaned_data$date_last, "/12")
@@ -138,7 +197,7 @@ cleaned_data$date_last <- as.Date(cleaned_data$date_last, "%m/%d/%y")
 We can examine the data to make sure everything looks ok.
 
 
-```coffee
+```r
 head(cleaned_data)
 ```
 
@@ -159,7 +218,7 @@ head(cleaned_data)
 ## 6       47      410        Migratory           <NA>
 ```
 
-```coffee
+```r
 tail(cleaned_data)
 ```
 
@@ -185,7 +244,7 @@ Now we can confidently save these data into a separate file which w called `clea
 
 
 
-```coffee
+```r
 write.csv(cleaned_data, file = "data/cleaned_data.csv")
 ```
 
