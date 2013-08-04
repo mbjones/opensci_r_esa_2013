@@ -38,6 +38,7 @@ head(species)
 # Rather than look up data for every single one in this dataset, we'll pick a random sample of 10
 species <- species_list[sample(nrow(species_list), 10), ]
 curated_species <- c("COD", "YFT", "OYH", "SQJ")
+species <- species_list[which(curated_species %in% species_list)]
 ```
 
 Grab some landings data for these species
