@@ -1,5 +1,10 @@
 ```{r}
 library(rfisheries)
+library(reshape2)
+library(ggplot2)
+```
+
+```{r}
 species <- species_codes()
 tunas <- grep("Tuna", species$english_name)
 ```
@@ -18,6 +23,7 @@ names(dat) = c("catch", "year", "a3_code")
 Tidy data is easy to plot:
 
 ```{r}
+
 ggplot(dat, aes(year, catch)) + geom_line() + facet_wrap(~a3_code, scales="free_y")
 ```
 
@@ -59,10 +65,18 @@ unit_meta <- list("catch" = "tonnes", year = "YYYY", "a3_code" =  codes)
 ```{r}
 require(reml)
 eml$set(contact_givenName = "Carl", contact_surName = "Boettiger", contact_email = "cboettig@ropensci.org")
-eml_write(dat = dat, col_meta, unit_meta, .title = "Landings Data", file = "landings.xml", file_description = "Landings data for several species by year, from the OpenFisheries database")
+file_description = "Landings data for several species by year, from the OpenFisheries database"
+
+eml_write(dat = dat, col_meta, unit_meta, .title = "Landings Data", file = "landings.xml", file_description = file_description)
 ```
 
-
+```{r}
+eml_publish("landings.xml", 
+            description=file_description, 
+            categories="Ecology", 
+            tags="fisheries", 
+            destination = "figshare")
+```
 
 
 ## Location data
