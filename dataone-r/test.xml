@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns:stmml="http://www.xml-cml.org/schema/stmml" xmlns:ds="eml://ecoinformatics.org/dataset-2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://sbc.lternet.edu/external/EML/schemas/eml-2.1.1/eml.xsd" system="knb" packageId="foo.1.1" scope="system">
+  <access authSystem="knb" order="denyFirst" scope="document">
+    <allow>
+      <principal>public</principal>
+      <permission>read</permission>
+    </allow>
+  </access>
+  <dataset scope="document">
+    <shortName>Test Dataset</shortName>
+    <title>TESTDATA: Test data set for uploading content, should be ignored</title>
+    <creator scope="document">
+      <individualName>
+        <givenName>Matt</givenName>
+        <surName>Jones</surName> </individualName>
+      <address scope="document">
+        <deliveryPoint>Marine Science Institute</deliveryPoint>
+        <deliveryPoint>University of California</deliveryPoint>
+        <city>Santa Barbara</city>
+        <administrativeArea>CA</administrativeArea>
+        <postalCode>93106-6150</postalCode>
+        <country>USA</country>
+      </address>
+      <electronicMailAddress>foobar@example.ucsb.edu</electronicMailAddress>
+    </creator>
+    <pubDate>2010</pubDate>
+    <abstract>
+      <para>ADCP (Currents), CTD (Hydrography) and Optics data (Fluorescence, Beam Attenuation, and
+        Volume Scattering Function) were collected at Mohawk Outside Spar in the Santa Barbara
+        Channel. The data contained here are for sampling site MKO. Data have been interpolated to a
+        20 min interval. ADCP data are orgainized into 1.0 meter bins (measured as height from the
+        bottom) to a maximum of 16 bins. All bins may not be filled, and in some cases, data from
+        bins technically above the surface are included. VSF data are available at angles, 100, 125
+        and 150 degrees. CTD parameters include Pressure, Temperature, Conductivity, Salinity,
+        Density and Fluorescence. The CTD array is located approximately 4.5 meters from the
+        surface, and there are additional temperature thermistors near the CTD array, at the bottom,
+        and mid way between these two.</para>
+    </abstract>
+    <keywordSet>
+      <keyword keywordType="theme">Santa Barbara Coastal</keyword>
+      <keyword keywordType="theme">LTER</keyword>
+    </keywordSet>
+    <keywordSet>
+      <keyword keywordType="theme">Ocean_biogeochemistry</keyword>
+      <keyword keywordType="theme">moorings</keyword>
+      <keywordThesaurus>SBCLTER_Categories</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword keywordType="place">MKO</keyword>
+      <keywordThesaurus>SBCLTER_Sites</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword keywordType="theme">Temperature</keyword>
+      <keywordThesaurus>KNB</keywordThesaurus>
+    </keywordSet>
+    <contact id="sbc-boilerplate-contact_SBC" system="sbclter" scope="system">
+      <positionName>Information Manager, Santa Barbara Coastal LTER</positionName>
+      <address scope="document">
+        <deliveryPoint>Marine Science Institute</deliveryPoint>
+        <deliveryPoint>University of California</deliveryPoint>
+        <city>Santa Barbara</city>
+        <administrativeArea>California</administrativeArea>
+        <postalCode>93106-6150</postalCode>
+        <country>United States</country>
+      </address>
+      <phone phonetype="voice">805 893 2071</phone>
+      <electronicMailAddress>foobar@example.ucsb.edu</electronicMailAddress>
+      <onlineUrl>http://sbc.lternet.edu</onlineUrl>
+    </contact>
+    <publisher id="sbc-boilerplate-publisher_SBC" system="sbclter" scope="system">
+      <organizationName>Santa Barbara Coastal Long Term Ecological Research
+        Project</organizationName>
+    </publisher>
+    <pubPlace>Santa Barbara, CA, USA</pubPlace>
+  </dataset>
+</eml:eml>
