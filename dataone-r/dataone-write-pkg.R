@@ -1,13 +1,21 @@
 library(dataone)
 
-# Select a repository to use for writing the data, in the case the KNB
-mn_nodeid <- "urn:node:KNB"
-#mn_nodeid <- "urn:node:mnDemo5"
+# Login
+cm <- CertificateManager()
+downloadCert(cm)
+getCertExpires(cm)
+
+# Select a repository to use for writing the data; these may change, especially for
+# testing environments, and can be checked by insepcting the node list for each environment
+#mn_nodeid <- "urn:node:KNB"              # MN for PROD env
+mn_nodeid <- "urn:node:mnDemo5"           # MN for DEV env
+#mn_nodeid <- "urn:node:mnSandboxUCSB1"   # MN for SANDBOX env
 
 # Initialize a client to interact with DataONE
 ## Create a DataONE client
-cli <- D1Client("PROD", mn_nodeid)
-#cli <- D1Client("DEV", mn_nodeid)
+#cli <- D1Client("PROD", mn_nodeid)
+cli <- D1Client("DEV", mn_nodeid)
+#cli <- D1Client("SANDBOX", mn_nodeid)
 
 ## Create some ids.
 cur_time <- format(Sys.time(), "%Y%m%d%H%M%s")
@@ -49,9 +57,10 @@ addData(data.package,d1o.md1)
 insertRelationship(data.package, id.mta, c(id))
 
 # Now upload the whole package to the member node
-create(d1.client, data.package)
+createDataPackage(cli, data.package)
 
 # Now retrieve the data file from the KNB node via remote access
+# Be sure to wait for DataONE to synchronize the object, which can take minutes to days depending on the node
 obj0 <- getD1Object(cli, pidValue)
 d0 <- asDataFrame(obj0)
 head(d0)
